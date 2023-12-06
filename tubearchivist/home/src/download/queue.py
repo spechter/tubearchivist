@@ -234,7 +234,6 @@ class PendingList(PendingIndex):
             self._add_video(video_id, vid_type)
 
     def _parse_playlist(self, url):
-        # TODO: Implement reversed direction for playlist
         """add all videos of playlist to list"""
         playlist = YoutubePlaylist(url, self.reverse_direction)
         playlist.build_json()
