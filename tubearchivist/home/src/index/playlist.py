@@ -24,11 +24,12 @@ class YoutubePlaylist(YouTubeItem):
     }
     yt_base = "https://www.youtube.com/playlist?list="
 
-    def __init__(self, youtube_id):
+    def __init__(self, youtube_id, reverse_direction: bool = False):
         super().__init__(youtube_id)
         self.all_members = False
         self.nav = False
         self.all_youtube_ids = []
+        self.yt_obs["playlistreverse"] = reverse_direction
 
     def build_json(self, scrape=False):
         """collection to create json_data"""
@@ -38,7 +39,7 @@ class YoutubePlaylist(YouTubeItem):
         else:
             subscribed = False
 
-        if scrape or not self.json_data:
+        if scrape or not self.json_data or self.yt_obs.get("playlistreverse"):
             self.get_from_youtube()
             if not self.youtube_meta:
                 self.json_data = False

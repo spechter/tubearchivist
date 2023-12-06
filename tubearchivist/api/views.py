@@ -636,6 +636,7 @@ class DownloadApiListView(ApiBaseView):
         """add list of videos to download queue"""
         data = request.data
         auto_start = bool(request.GET.get("autostart"))
+        reverse_direction = bool(request.GET.get("reversed"))
         try:
             to_add = data["data"]
         except KeyError:
@@ -652,7 +653,11 @@ class DownloadApiListView(ApiBaseView):
             print(message)
             return Response({"message": message}, status=400)
 
-        extrac_dl.delay(youtube_ids, auto_start=auto_start)
+        extrac_dl.delay(
+            youtube_ids,
+            auto_start=auto_start,
+            reverse_direction=reverse_direction,
+        )
 
         return Response(data)
 

@@ -163,13 +163,19 @@ class PendingList(PendingIndex):
         "check_formats": None,
     }
 
-    def __init__(self, youtube_ids=False, task=False):
+    def __init__(
+        self,
+        youtube_ids=False,
+        task=False,
+        reverse_direction: bool = False,
+    ):
         super().__init__()
         self.config = AppConfig().config
         self.youtube_ids = youtube_ids
         self.task = task
         self.to_skip = False
         self.missing_videos = False
+        self.reverse_direction = reverse_direction
 
     def parse_url_list(self):
         """extract youtube ids from list"""
@@ -219,14 +225,18 @@ class PendingList(PendingIndex):
     def _parse_channel(self, url, vid_type):
         """add all videos of channel to list"""
         video_results = ChannelSubscription().get_last_youtube_videos(
-            url, limit=False, query_filter=vid_type
+            url,
+            limit=False,
+            reverse_direction=self.reverse_direction,
+            query_filter=vid_type,
         )
         for video_id, _, vid_type in video_results:
             self._add_video(video_id, vid_type)
 
     def _parse_playlist(self, url):
+        # TODO: Implement reversed direction for playlist
         """add all videos of playlist to list"""
-        playlist = YoutubePlaylist(url)
+        playlist = YoutubePlaylist(url, self.reverse_direction)
         playlist.build_json()
         if not playlist.json_data:
             message = f"{playlist.youtube_id}: failed to extract metadata"

@@ -23,8 +23,10 @@
                 <div id='hidden-form' novalidate>
                     {% csrf_token %}
                     {{ add_form }}
-                    <button onclick="addToQueue()">Add to queue</button>
-                    <button onclick="addToQueue(true)">Download now</button>
+                    <button onclick="addToQueue(false, false)">Add to queue</button>
+                    <button onclick="addToQueue(true, false)">Download now</button>
+                    <button onclick="addToQueue(false, true)">Add reversed to queue</button>
+                    <button onclick="addToQueue(true, true)">Download reversed now</button>
                 </div>
             </div>
         </div>

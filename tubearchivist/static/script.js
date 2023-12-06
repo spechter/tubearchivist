@@ -179,16 +179,21 @@ function dlPending() {
   }, 500);
 }
 
-function addToQueue(autostart = false) {
+function addToQueue(autostart = false, reverseDirection = false) {
   let textArea = document.getElementById('id_vid_url');
   if (textArea.value === '') {
     return;
   }
   let toPost = { data: [{ youtube_id: textArea.value, status: 'pending' }] };
   let apiEndpoint = '/api/download/';
+  let parameterString = '';
   if (autostart) {
-    apiEndpoint = `${apiEndpoint}?autostart=true`;
+    parameterString += parameterString.length === 0 ? '?autostart=true' : '&autostart=true';
   }
+  if (reverseDirection) {
+    parameterString += parameterString.length === 0 ? '?reversed=true' : '&reversed=true';
+  }
+  apiEndpoint += parameterString;
   apiRequest(apiEndpoint, 'POST', toPost);
   textArea.value = '';
   setTimeout(function () {

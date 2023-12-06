@@ -38,7 +38,11 @@ class ChannelSubscription:
         return all_channels
 
     def get_last_youtube_videos(
-        self, channel_id, limit=True, query_filter=VideoTypeEnum.UNKNOWN
+        self,
+        channel_id,
+        limit=True,
+        reverse_direction: bool = False,
+        query_filter=VideoTypeEnum.UNKNOWN,
     ):
         """get a list of last videos from channel"""
         queries = self._build_queries(query_filter, limit)
@@ -50,8 +54,12 @@ class ChannelSubscription:
                 "skip_download": True,
                 "extract_flat": True,
             }
-            if limit:
+            if reverse_direction:
+                obs["playlistreverse"] = True
+            if limit and not reverse_direction:
                 obs["playlistend"] = limit_amount
+            elif limit and reverse_direction:
+                obs["playliststart"] = limit_amount
 
             vid_type = vid_type_enum.value
             channel = YtWrap(obs, self.config).extract(
@@ -244,7 +252,7 @@ class PlaylistSubscription:
         total = len(all_playlists)
         for idx, playlist_id in enumerate(all_playlists):
             size_limit = self.config["subscriptions"]["channel_size"]
-            playlist = YoutubePlaylist(playlist_id)
+            playlist = YoutubePlaylist(playlist_id, reverse_direction=False)
             is_active = playlist.update_playlist()
             if not is_active:
                 playlist.deactivate()
